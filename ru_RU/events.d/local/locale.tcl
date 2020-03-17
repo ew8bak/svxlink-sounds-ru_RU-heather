@@ -79,4 +79,62 @@ proc playTime {hour minute} {
   }
 }
 
+#
+# Say the specified digit number (0 - 999999)
+# Произносит число от 0 до 999 999
+#
+proc playNumber {number} {
+  if {[regexp {(\d+)\.(\d+)?} $number -> integer fraction]} {
+    playNumber $integer;
+    playMsg "Default" "decimal"
+    playNumber  $fraction;
+    return;
+  }
+  if {$number > 999999} {
+    error "playNumber: Value out of range: $number"
+  }
+  if {$number > 999} {
+    set hungreds [string range $number 0 end-3]
+    playNumber $hungreds
+    playMsg "Default" "hungred[getCase $hungreds]"
+    set number [string range $number [string length $hungreds] end]
+  }
+  while {[string length $number]> 0} {
+    if {$number !=0 && [string index $number 0]==0} {set number [string range $number 1 end]}
+    set len [string length $number];
+    if {$len == 3} {
+      playMsg "Default" "[string index $number 0]00"
+      set number [string range $number 1 end]
+    }
+    if {$len == 2} {
+      if {[string index $number 0]==0} {
+      set number [string range $number 1 end]
+      } else {
+        if {$number > 20} {
+          playMsg "Default" "[string index $number 0]X"
+          if {[string index $number 1]!=0} {
+            set number [string index $number 1]
+          } else {
+            set number "" 
+          }
+        } else {
+          if {$number != 0} {
+            playMsg "Default" "$number"
+            set number ""
+          }
+        }
+      }
+    } 
+    if {$len == 1} {
+      playMsg "Default" "$number"
+      set number ""
+    }
+  }
+}
+
+
+
+
+
+
 # End russian localisation
