@@ -7,12 +7,73 @@
 ###############################################################################
 # Руский синтаксис для воспроизведения времени
 # by R2ADU
+
+###############################################################################
+# Speak number and measure units
 ###############################################################################
 
 
-#
+
+proc speakNumber {module_name value unit} {
+  if {$value<0} {
+    playMsg "MetarInfo" "minus";
+    set value [expr abs($value)];
+  }
+  if {[regexp {(\d+)\.(\d+)?} $value -> integer fraction]} {
+    speakNumber $module_name $integer "integer";
+    playMsg "Default" "and";
+    if {[string length $fraction] == 2} {
+      speakNumber $module_name $fraction "hundredth"
+    } else {
+      speakNumber $module_name $fraction "tenth"
+    }
+    if {$unit != ""} {
+      append unit "1"
+      playMsg $module_name "$unit"
+    }
+    return;
+  }
+  regexp {^0*(\d+)} $value _dummy value
+  if {$unit=="minute" || $unit=="thousand" || $unit=="unit_mps" || $unit=="integer"} {
+    set gender "f" 
+  } else {
+    set gender ""
+  }
+  if {$unit != ""} {
+    append unit [getCase $value]
+  }
+  if {$value>999} {
+    set x_tmp [expr $value / 1000]
+    speakNumber "Default" $x_tmp "thousand"
+    append x_tmp "000"
+    set value [expr $value - $x_tmp]
+  }
+  if {$value>99} {
+    set x_tmp [expr [string index $value 0]*100]
+    playMsg "Default" $x_tmp
+    set value [expr $value-$x_tmp]
+  }
+  if {$value <= 20} {
+    set x_tmp [expr int($value)]
+    if {$value == 1 || $value == 2} {append x_tmp $gender}
+    playMsg "Default" $x_tmp
+  } else {
+    set x_tmp [expr [string index $value 0]*10]
+    playMsg "Default" $x_tmp
+    set value [expr $value-$x_tmp]
+    if {$value !=0} {
+      if {$value == 1 || $value == 2} {append value $gender}
+      playMsg "Default" $value
+    }
+  }
+  if {$unit != ""} {
+    playMsg $module_name $unit
+  }
+}
+
+############################################################################################################
 # Returns the digit modifier according to case 
-#
+############################################################################################################
 proc getCase {value} {
   if {[string length $value] > 2 } {   
     set value [string range $value [string length $value]-2 [string length $value]]
@@ -24,10 +85,9 @@ proc getCase {value} {
   if {($value >= 2) && ($value <= 4) } {return "1"} else {return ""}  
 }
 
-
-#
+############################################################################################################
 # Say the time specified by function arguments "hour" and "minute".
-#
+############################################################################################################
 proc playTime {hour minute} {
   variable Logic::CFG_TIME_FORMAT
   # Strip white space and leading zeros. Check ranges.
@@ -50,91 +110,24 @@ proc playTime {hour minute} {
       }
     }
   }
-  if {$hour > 20} {
-    playMsg "Default" "[string index $hour 0]X"
-    playMsg "Default" [string index $hour 1]
-  } else {
-    if {$hour != 0} {
-      playMsg "Default" $hour
-    }
-  }
-  playMsg "Default" "hour[getCase $hour]"
-  if {$minute != 0} {
-    if {$minute > 20} {
-      playMsg "Default" "[string index $minute 0]X"
-      set minute [string index $minute 1]
-    }
-    if {$minute > 2} {
-      playMsg "Default" $minute
-    } else {
-      if {$minute !=0} {
-        playMsg "Default" "[string index $minute 0]f"
-      }
-    }
-    playMsg "Default" "minute[getCase $minute]"
-  }
+  speakNumber "Default" $hour "hour"
+  speakNumber "Default" $minute "minute"
   if {[info exists CFG_TIME_FORMAT] && ($CFG_TIME_FORMAT == 12)} {
     playMsg "Core" $ampm;
     playSilence 100;
   }
 }
 
-#
-# Say the specified digit number (0 - 999999)
-# Произносит число от 0 до 999 999
-#
+############################################################################################################
+# Replacing standard pronunciation procedures
+############################################################################################################
 proc playNumber {number} {
-  if {[regexp {(\d+)\.(\d+)?} $number -> integer fraction]} {
-    playNumber $integer;
-    playMsg "Default" "decimal"
-    playNumber  $fraction;
-    return;
-  }
-  if {$number > 999999} {
-    error "playNumber: Value out of range: $number"
-  }
-  if {$number > 999} {
-    set hungreds [string range $number 0 end-3]
-    playNumber $hungreds
-    playMsg "Default" "hungred[getCase $hungreds]"
-    set number [string range $number [string length $hungreds] end]
-  }
-  while {[string length $number]> 0} {
-    if {$number !=0 && [string index $number 0]==0} {set number [string range $number 1 end]}
-    set len [string length $number];
-    if {$len == 3} {
-      playMsg "Default" "[string index $number 0]00"
-      set number [string range $number 1 end]
-    }
-    if {$len == 2} {
-      if {[string index $number 0]==0} {
-      set number [string range $number 1 end]
-      } else {
-        if {$number > 20} {
-          playMsg "Default" "[string index $number 0]X"
-          if {[string index $number 1]!=0} {
-            set number [string index $number 1]
-          } else {
-            set number "" 
-          }
-        } else {
-          if {$number != 0} {
-            playMsg "Default" "$number"
-            set number ""
-          }
-        }
-      }
-    } 
-    if {$len == 1} {
-      playMsg "Default" "$number"
-      set number ""
-    }
-  }
+  speakNumber "Default" $number ""
 }
 
-
-
-
+proc spellNumber {number} {
+  speakNumber "Default" $number ""
+}
 
 
 # End russian localisation
