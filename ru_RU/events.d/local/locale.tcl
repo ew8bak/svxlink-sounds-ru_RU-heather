@@ -121,6 +121,22 @@ proc playTime {hour minute} {
 ############################################################################################################
 # Replacing standard pronunciation procedures
 ############################################################################################################
+proc playFrequency {fq} {
+  if {$fq < 1000} {
+    set unit "Hz"
+  } elseif {$fq < 1000000} {
+    set fq [expr {$fq / 1000.0}]
+    set unit "kHz"
+  } elseif {$fq < 1000000000} {
+    set fq [expr {$fq / 1000000.0}]
+    set unit "MHz"
+  } else {
+    set fq [expr {$fq / 1000000000.0}]
+    set unit "GHz"
+  }
+   speakNumber "Core" [string trimright [format "%.3f" $fq] ".0"] $unit
+}
+
 proc playNumber {number} {
   speakNumber "Default" $number ""
 }
