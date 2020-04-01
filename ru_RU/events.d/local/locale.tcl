@@ -34,7 +34,7 @@ proc speakNumber {module_name value unit} {
     return;
   }
   regexp {^0*(\d+)} $value _dummy value
-  if {$unit=="minute" || $unit=="thousand" || $unit=="unit_mps" || $unit=="integer"} {
+  if {$unit=="minute" || $unit=="thousand" || $unit=="unit_mps" || $unit=="integer" || $unit=="connected_station"} {
     set gender "f" 
   } else {
     set gender ""
