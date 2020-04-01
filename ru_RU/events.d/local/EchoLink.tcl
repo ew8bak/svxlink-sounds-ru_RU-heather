@@ -30,4 +30,20 @@ proc status_report {} {
   }
 }
 
+#
+# Executed when a request to list all connected stations is received.
+# That is, someone press DTMF "1#" when the EchoLink module is active.
+#
+proc list_connected_stations {connected_stations} {
+  speakNumber "EchoLink" [llength $connected_stations] "connected_station";
+  if {[llength $connected_stations] != 0} {
+    playSilence 50;
+    playMsg "connected_station_list";
+    foreach {call} "$connected_stations" {
+      spellEchoLinkCallsign $call;
+      playSilence 250;
+    }
+  }
+}
+
 }
