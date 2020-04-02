@@ -5,6 +5,31 @@ proc speakNumber {msg unit} {
   ::speakNumber $module_name $msg $unit;
 }
 
+# no airport defined
+proc no_airport_defined {} {
+   playMsg "no_airport_defined";
+   playSilence 200;
+}
+# no airport defined
+proc no_such_airport {} {
+   playMsg "no_such_airport";
+   playSilence 200;
+}
+# METAR not valid
+proc metar_not_valid {} {
+  playMsg "metar_not_valid";
+   playSilence 200;
+}
+# airport is closed due to snow
+proc snowclosed {} {
+   playMag "aiport_closed_due_to_sn";
+   playSilence 200;
+}
+# RWY is clear
+proc all_rwy_clear {} {
+  playMsg "all_runways_clr";
+  playSilence 200;
+}
 
 # MET-report TIME
 proc metreport_time item {
