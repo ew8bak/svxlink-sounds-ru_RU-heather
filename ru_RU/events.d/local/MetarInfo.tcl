@@ -341,5 +341,17 @@ proc qfe {val} {
   playSilence 200
 }
 
+# announce airport at the beginning of the MEATAR
+proc announce_airport {icao} {
+  global langdir;
 
+  playMsg "airport";
+  playSilence 100;
+  if [file exists "$langdir/MetarInfo/$icao.wav"] {
+    playMsg $icao;
+  } else {
+    spellWord $icao;
+  }
+
+}
 }
