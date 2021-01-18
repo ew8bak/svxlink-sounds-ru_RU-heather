@@ -140,10 +140,10 @@ proc playFrequency {fq} {
 proc playNumber {number} {
   speakNumber "Default" $number ""
 }
-
-proc spellNumber {number} {
-  speakNumber "Default" $number ""
-}
+//
+// proc spellNumber {number} {
+//  speakNumber "Default" $number ""
+// }
 
 
 # End russian localisation
