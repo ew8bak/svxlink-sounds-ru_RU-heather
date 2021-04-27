@@ -56,7 +56,7 @@ proc speakNumber {module_name value unit} {
   if {$value <= 20} {
     set x_tmp [expr int($value)]
     if {$value == 1 || $value == 2} {append x_tmp $gender}
-    playMsg "Default" $x_tmp
+    if {$value !=0} {playMsg "Default" $x_tmp}
   } else {
     set x_tmp [expr [string index $value 0]*10]
     playMsg "Default" $x_tmp
