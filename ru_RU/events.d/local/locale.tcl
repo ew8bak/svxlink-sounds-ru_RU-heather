@@ -47,11 +47,13 @@ proc speakNumber {module_name value unit} {
     speakNumber "Default" $x_tmp "thousand"
     append x_tmp "000"
     set value [expr $value - $x_tmp]
+    if {$value == 0} {return}
   }
   if {$value>99} {
     set x_tmp [expr [string index $value 0]*100]
     playMsg "Default" $x_tmp
     set value [expr $value-$x_tmp]
+    if {$value == 0} {return}
   }
   if {$value <= 20} {
     set x_tmp [expr int($value)]
@@ -110,8 +112,26 @@ proc playTime {hour minute} {
       }
     }
   }
-  speakNumber "Default" $hour "hour"
-  speakNumber "Default" $minute "minute"
+  
+  if {$hour > 20} {
+    playMsg "Default" "[string index $hour 0]X"
+    playMsg "Default" [string index $hour 1]
+  } else {
+      playMsg "Default" $hour
+  }
+  playMsg "Default" "hour[getCase $hour]"
+    if {$minute > 20} {
+      playMsg "Default" "[string index $minute 0]X"
+      set minute [string index $minute 1]
+    }
+    if {$minute > 2} {
+      playMsg "Default" $minute
+    } else {
+        playMsg "Default" "[string index $minute 0]f"
+    }
+    playMsg "Default" "minute[getCase $minute]"
+
+
   if {[info exists CFG_TIME_FORMAT] && ($CFG_TIME_FORMAT == 12)} {
     playMsg "Core" $ampm;
     playSilence 100;
