@@ -126,6 +126,12 @@ proc playTime {hour minute} {
         return
     }
 
+    if {$minute == 00} {
+            playMsg "Default" "[string index $minute 0]"
+            playMsg "Default" "minute[getCase $minute]"
+            return
+    }
+
     if {$minute > 20} {
       playMsg "Default" "[string index $minute 0]X"
       set minute [string index $minute 1]
