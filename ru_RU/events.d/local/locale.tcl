@@ -92,7 +92,7 @@ proc getCase {value} {
 ############################################################################################################
 proc playTime {hour minute} {
   variable Logic::CFG_TIME_FORMAT
-  # Strip white space and leading zeros. Check ranges.
+# Strip white space and leading zeros. Check ranges.
   if {[scan $hour "%d" hour] != 1 || $hour < 0 || $hour > 23} {
     error "playTime: Non digit hour or value out of range: $hour"
   }
@@ -112,30 +112,37 @@ proc playTime {hour minute} {
       }
     }
   }
-  
+
   if {$hour > 20} {
     playMsg "Default" "[string index $hour 0]X"
     playMsg "Default" [string index $hour 1]
   } else {
       playMsg "Default" $hour
   }
-  playMsg "Default" "hour[getCase $hour]"
+    playMsg "Default" "hour[getCase $hour]"
+    if {$minute == 30 || $minute == 40 || $minute == 50} {
+        playMsg "Default" "[string index $minute 0]X"
+        playMsg "Default" "minute[getCase $minute]"
+        return
+    }
+
     if {$minute > 20} {
       playMsg "Default" "[string index $minute 0]X"
       set minute [string index $minute 1]
     }
+
     if {$minute > 2} {
       playMsg "Default" $minute
     } else {
         playMsg "Default" "[string index $minute 0]f"
     }
+    if {$minute == 0} {playMsg "Default" "[string index $minute 0]"}
     playMsg "Default" "minute[getCase $minute]"
 
-
-  if {[info exists CFG_TIME_FORMAT] && ($CFG_TIME_FORMAT == 12)} {
-    playMsg "Core" $ampm;
-    playSilence 100;
-  }
+    if {[info exists CFG_TIME_FORMAT] && ($CFG_TIME_FORMAT == 12)} {
+        playMsg "Core" $ampm;
+        playSilence 100;
+    }
 }
 
 ############################################################################################################
